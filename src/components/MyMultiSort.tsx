@@ -2,37 +2,27 @@ import React, {useEffect, useState} from "react";
 import {
     Badge,
     Button,
-    createStyles,
     Divider,
     FormControl,
-    makeStyles,
+    ListItemIcon,
     MenuItem,
     Select,
-    Theme,
+    Tooltip,
     Typography,
     withStyles
 } from "@material-ui/core";
 import {ArrowDownwardOutlined, ArrowUpwardOutlined} from "@material-ui/icons";
 import RemoveIcon from '@material-ui/icons/Remove';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
+import SortIcon from '@material-ui/icons/Sort';
+import RotateLeftIcon from '@material-ui/icons/RotateLeft';
 
-export interface Sort {
-    column: string;
-    sortDirection: 'asc' | 'desc';
+interface Props {
+    resetQuery?: () => void;
+    getQuery?: (query: string) => void;
 }
 
-const useStyles = makeStyles((theme: Theme) =>
-    createStyles({
-        root: {
-            '& > *': {
-                margin: theme.spacing(1),
-            },
-        }
-    }),
-);
-
-const StyledBadge = withStyles((theme: Theme) => ({
+const StyledBadge = withStyles(() => ({
     badge: {
         // top: '50%',
         // right: -3,
@@ -47,10 +37,10 @@ const StyledBadge = withStyles((theme: Theme) => ({
     },
 }))(Badge);
 
-// const MyMultiSort = ({resetQuery, getQuery}) => {
-const MyMultiSort = () => {
+const MyMultiSort = (props: Props) => {
 
-        const classes = useStyles();
+        const getQuery = (query: string) => props.getQuery;
+        const resetQuery = () => props.resetQuery;
 
         const sortEnums = ["desc", "asc", "undefined"];
 
@@ -300,8 +290,10 @@ const MyMultiSort = () => {
                     return a.order - b.order;
                 });
                 const query = sortedParams.map(param => `&sort=${param.columnName},${param.sortEnum}`).join("");
-                setFilterParams(query)
-                // getQuery(query);
+                setFilterParams(query);
+                if (getQuery) {
+                    getQuery(query)
+                }
             }
         };
 
@@ -316,8 +308,10 @@ const MyMultiSort = () => {
                 })
             );
             setParams(resetParams);
-            setFilterParams('')
-            // resetQuery();
+            setFilterParams('');
+            if (resetQuery) {
+                resetQuery()
+            }
         };
 
         useEffect(() => {
@@ -345,10 +339,7 @@ const MyMultiSort = () => {
             , [removedOrder])
 
         return (
-            <div style={{
-                width: "100%",
-                // borderBottom: "1px solid grey"
-            }}>
+            <div style={{width: "100%"}}>
                 <div style={{
                     width: "100%",
                     display: "flex",
@@ -358,9 +349,6 @@ const MyMultiSort = () => {
                     padding: "5px",
                     backgroundColor: "whitesmoke"
                 }}>
-                    {/*<Typography variant={"caption"} style={{paddingLeft: 10}}>*/}
-                    {/*    مرتب سازی بر اساس :*/}
-                    {/*</Typography>*/}
                     {
                         params.map((param) =>
                             <div key={param.id}
@@ -374,7 +362,7 @@ const MyMultiSort = () => {
                                         fullWidth
                                         variant="text"
                                         color="default"
-                                        style={{backgroundColor: "transparent", minWidth: 100, padding: 0}}
+                                        style={{backgroundColor: "transparent", width: 135, padding: 0}}
                                         onClick={(event: any) => handleCombinedClicks(param.id, event)}>
                                     <Typography variant={"button"}>{param.translation}</Typography>
                                     {param.sortEnum === "desc" ?
@@ -392,8 +380,7 @@ const MyMultiSort = () => {
                                             id={`${param.id}`}
                                             autoWidth={true}
                                             disableUnderline
-                                            IconComponent={MoreVertIcon}
-                                    >
+                                            IconComponent={MoreVertIcon}>
                                         <MenuItem divider value={"desc"}>
                                             <ListItemIcon>
                                                 <ArrowDownwardOutlined fontSize="small"/>
@@ -431,10 +418,19 @@ const MyMultiSort = () => {
                         )
                     }
                     <div>
-                        <Button style={{margin: 10}} variant="outlined" size={"medium"} color="primary"
-                                onClick={submitSortParams}>Sort</Button>
-                        <Button style={{margin: 10}} variant="outlined" size={"medium"} color="secondary"
-                                onClick={resetSortParams}>UnSort</Button>
+                        <Tooltip title="Sort" arrow>
+                            <Button style={{margin: 10, borderRadius: 15}} variant="outlined" size={"small"} color="primary"
+                                    onClick={submitSortParams}>
+                                <SortIcon/>
+                            </Button>
+                        </Tooltip>
+                        <Tooltip title="Unsort" arrow>
+                            <Button style={{margin: 10, borderRadius: 15}} variant="outlined" size={"small"}
+                                    color="secondary"
+                                    onClick={resetSortParams}>
+                                <RotateLeftIcon/>
+                            </Button>
+                        </Tooltip>
                     </div>
                 </div>
                 {filterParams !== '' && <h3>{filterParams}</h3>}
