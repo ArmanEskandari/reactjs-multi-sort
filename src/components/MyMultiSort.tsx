@@ -68,7 +68,7 @@ const MyMultiSort = () => {
             {
                 id: 1,
                 columnName: "COUNT_CASH",
-                translation: "Count Credit",
+                translation: "Count Cash",
                 sortEnum: sortEnums[2],
                 clickCount: 2,
                 order: 0
@@ -76,7 +76,7 @@ const MyMultiSort = () => {
             {
                 id: 2,
                 columnName: "COUNT_CREDIT",
-                translation: "Count Cash",
+                translation: "Count Credit",
                 sortEnum: sortEnums[2],
                 clickCount: 2,
                 order: 0
@@ -91,7 +91,7 @@ const MyMultiSort = () => {
             }
         ]);
 
-        const handleMouseClick = (id: number, type?: string) => {
+        const handleSingleClick = (id: number, type?: string) => {
             // mouse event
             const newState = params.map(param => {
                 if (type) {
@@ -220,11 +220,11 @@ const MyMultiSort = () => {
                 )
                 setParams(orderedState)
             } else {
-                handleMouseClick(id)
+                handleSingleClick(id)
             }
         };
 
-        const menuClick = (index: number, id: number) => {
+        const addToMultiSort = (index: number, id: number) => {
             const maxOrder = Math.max(...params.map(param => param.order))
             setMAXorder(maxOrder)
             const newState = params.map(param => {
@@ -272,22 +272,22 @@ const MyMultiSort = () => {
             setParams(newState)
         };
 
-        const handleTouchClick = (index: unknown | string, id: number) => {
+        const handleMenuClick = (index: unknown | string, id: number) => {
             switch (index) {
                 case "desc":
-                    handleMouseClick(id, index)
+                    handleSingleClick(id, index)
                     break;
                 case "asc":
-                    handleMouseClick(id, index)
+                    handleSingleClick(id, index)
                     break;
                 case 0:
-                    menuClick(index, id)
+                    addToMultiSort(index, id)
                     break;
                 case 1:
-                    menuClick(index, id)
+                    addToMultiSort(index, id)
                     break;
                 case 2:
-                    menuClick(index, id)
+                    addToMultiSort(index, id)
                     break;
                 default:
                     return
@@ -388,7 +388,7 @@ const MyMultiSort = () => {
                                 <FormControl variant="standard">
                                     <Select variant={"standard"}
                                             value=""
-                                            onChange={(event) => handleTouchClick(event.target.value, param.id)}
+                                            onChange={(event) => handleMenuClick(event.target.value, param.id)}
                                             id={`${param.id}`}
                                             autoWidth={true}
                                             disableUnderline
