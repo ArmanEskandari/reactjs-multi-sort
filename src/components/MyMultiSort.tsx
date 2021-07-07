@@ -15,6 +15,7 @@ import {
 import {ArrowDownwardOutlined, ArrowUpwardOutlined} from "@material-ui/icons";
 import RemoveIcon from '@material-ui/icons/Remove';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
+import ListItemIcon from '@material-ui/core/ListItemIcon';
 
 export interface Sort {
     column: string;
@@ -60,6 +61,8 @@ const MyMultiSort = () => {
         const [removedOrder, setRemovedOrder] = useState({
             id: undefined as unknown as number,
         });
+
+        const [filterParams, setFilterParams] = useState('');
 
         const [params, setParams] = useState([
             {
@@ -297,6 +300,7 @@ const MyMultiSort = () => {
                     return a.order - b.order;
                 });
                 const query = sortedParams.map(param => `&sort=${param.columnName},${param.sortEnum}`).join("");
+                setFilterParams(query)
                 // getQuery(query);
             }
         };
@@ -312,6 +316,7 @@ const MyMultiSort = () => {
                 })
             );
             setParams(resetParams);
+            setFilterParams('')
             // resetQuery();
         };
 
@@ -342,7 +347,7 @@ const MyMultiSort = () => {
         return (
             <div style={{
                 width: "100%",
-                borderBottom: "1px solid grey"
+                // borderBottom: "1px solid grey"
             }}>
                 <div style={{
                     width: "100%",
@@ -390,23 +395,33 @@ const MyMultiSort = () => {
                                             IconComponent={MoreVertIcon}
                                     >
                                         <MenuItem divider value={"desc"}>
-                                            <ArrowDownwardOutlined fontSize="small"/>
+                                            <ListItemIcon>
+                                                <ArrowDownwardOutlined fontSize="small"/>
+                                            </ListItemIcon>
                                             Sort desc
                                         </MenuItem>
                                         <MenuItem divider value={"asc"}>
-                                            <ArrowUpwardOutlined fontSize="small"/>
+                                            <ListItemIcon>
+                                                <ArrowUpwardOutlined fontSize="small"/>
+                                            </ListItemIcon>
                                             Sort asc
                                         </MenuItem>
                                         <MenuItem divider disabled={param.sortEnum === "desc"} value={0}>
-                                            <ArrowDownwardOutlined fontSize="small"/>
+                                            <ListItemIcon>
+                                                <ArrowDownwardOutlined fontSize="small"/>
+                                            </ListItemIcon>
                                             Add to sort desc
                                         </MenuItem>
                                         <MenuItem divider disabled={param.sortEnum === "asc"} value={1}>
-                                            <ArrowUpwardOutlined fontSize="small"/>
+                                            <ListItemIcon>
+                                                <ArrowUpwardOutlined fontSize="small"/>
+                                            </ListItemIcon>
                                             Add to sort asc
                                         </MenuItem>
                                         <MenuItem divider disabled={param.sortEnum === "undefined"} value={2}>
-                                            <RemoveIcon fontSize="small"/>
+                                            <ListItemIcon>
+                                                <RemoveIcon fontSize="small"/>
+                                            </ListItemIcon>
                                             Unsort
                                         </MenuItem>
                                     </Select>
@@ -422,7 +437,7 @@ const MyMultiSort = () => {
                                 onClick={resetSortParams}>UnSort</Button>
                     </div>
                 </div>
-                {/*{filterParams !== '' && <h3>{filterParams}</h3>}*/}
+                {filterParams !== '' && <h3>{filterParams}</h3>}
             </div>
         )
     }
